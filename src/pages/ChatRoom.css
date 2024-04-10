@@ -1,0 +1,145 @@
+body {
+  background-color: #fcf9e0;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.App {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 60px 0;
+}
+
+main {
+  padding: 30px 30px;
+  height: 60vh;
+  margin: 50px 0 10px;
+  max-width: 728px;
+  box-sizing: border-box;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  border-radius: 40px;
+  border: 3px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+main::-webkit-scrollbar {
+  width: 0.25rem;
+}
+
+main::-webkit-scrollbar-track {
+  background: #a1a1ac;
+  border-radius: 10px;
+}
+
+main::-webkit-scrollbar-thumb {
+  background: #d7c981;
+  border-radius: 10px;
+}
+
+form {
+  max-width: 728px;
+  height: 10vh;
+  position: fixed;
+  bottom: 20px;
+  margin: 0 auto;
+  padding: 0 30px;
+  width: 100%;
+  max-width: 728px;
+  display: flex;
+  font-size: 1.5rem;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+form button {
+  width: 20%;
+  background-color: rgb(94, 94, 234);
+  color: #ffffff;
+  border: 3px solid #ccc;
+  border-radius: 25px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+input, button {
+  padding: 12px 20px;
+  margin: 8px 0;
+  border-radius: 25px;
+  box-sizing: border-box;
+}
+
+input {
+  line-height: 1.5;
+  font-size: 1.5rem;
+  color: rgb(0, 0, 0);
+  outline: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  border: 3px solid #ccc;
+}
+
+button {
+  text-align: center;
+  font-size: 1.25rem;
+  border-radius: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+
+
+ul, li {
+  text-align: left;
+  list-style: none;
+}
+
+p {
+  max-width: 500px;
+  margin-bottom: 12px;
+  line-height: 24px;
+  padding: 10px 20px;
+  border-radius: 25px;
+  position: relative;
+  color: white;
+  text-align: center;
+}
+
+.message {
+  display: flex;
+  align-items: center;
+}
+
+
+.sent {
+  flex-direction: row-reverse;
+}
+.sent p, .received p {
+  max-width: 60%;
+  word-wrap: break-word;
+  text-align: left;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.sent p {
+  color: white;
+  background: #0b93f6;
+  align-self: flex-end;
+}
+.received p {
+  background: #e5e5ea;
+  color: black;
+}
+
+img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 2px 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
