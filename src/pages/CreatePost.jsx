@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import '../App.css';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../firebase-config';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,6 +15,7 @@ function CreatePost(isAuth) {
       title, 
       postText, 
       author: {name: auth.currentUser.displayName, id: auth.currentUser.uid},
+      createdAt: serverTimestamp(),
     });
     navigate("/");
   };

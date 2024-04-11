@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import '../App.css';
-import { getDocs, collection, deleteDoc, doc } from 'firebase/firestore';
+import { getDocs, collection, deleteDoc, doc, orderBy, query } from 'firebase/firestore';
 import { db, auth } from '../firebase-config';
 
 function Home({isAuth}) {
@@ -10,7 +10,8 @@ function Home({isAuth}) {
 
   useEffect(() => {
     const getPosts = async() => {
-      const data = await getDocs(postsCollectionRef);
+      const q = query(postsCollectionRef, orderBy('createdAt', 'desc'));
+      const data = await getDocs(q);
       setPostList(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
 
