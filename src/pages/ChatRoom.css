@@ -1,5 +1,5 @@
 body {
-  background-color: #fcf9e0;
+  background-color: #ffffff;
   height: 100%;
   display: flex;
   justify-content: center;
@@ -31,12 +31,12 @@ main::-webkit-scrollbar {
 }
 
 main::-webkit-scrollbar-track {
-  background: #a1a1ac;
+  background: #e8e8eb;
   border-radius: 10px;
 }
 
 main::-webkit-scrollbar-thumb {
-  background: #d7c981;
+  background: #bdbdc8;
   border-radius: 10px;
 }
 
