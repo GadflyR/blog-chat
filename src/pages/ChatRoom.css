@@ -14,8 +14,8 @@ body {
 
 main {
   padding: 30px 30px;
-  height: 60vh;
-  margin: 50px 0 10px;
+  height: 68vh;
+  margin: 40px 10px 0;
   max-width: 728px;
   box-sizing: border-box;
   overflow-y: scroll;
@@ -42,24 +42,24 @@ main::-webkit-scrollbar-thumb {
 
 form {
   max-width: 728px;
-  height: 10vh;
+  height: 9vh;
   position: fixed;
   bottom: 20px;
   margin: 0 auto;
-  padding: 0 30px;
+  padding: 0 10px;
   width: 100%;
   max-width: 728px;
   display: flex;
   font-size: 1.5rem;
-  justify-content: space-between;
   box-sizing: border-box;
 }
 
 form button {
-  width: 20%;
+  width: 15%;
   background-color: rgb(94, 94, 234);
   color: #ffffff;
   border: 3px solid #ccc;
+  margin-left: 20px;
   border-radius: 25px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
@@ -74,6 +74,7 @@ input, button {
 input {
   line-height: 1.5;
   font-size: 1.5rem;
+  width: 50%;
   color: rgb(0, 0, 0);
   outline: none;
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
