@@ -118,8 +118,7 @@ function Home() {
   return (
     <main className='galleryPage'>
       <section className='hero'>
-        <h1>Moments, colors, and little memories.</h1>
-        <p>Public gallery — no login needed to browse.</p>
+        <h1>An Archive</h1>
       </section>
 
       {isLoading && <p className='statusText'>Loading gallery...</p>}
