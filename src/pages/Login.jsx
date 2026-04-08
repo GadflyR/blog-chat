@@ -1,25 +1,27 @@
-import '../App.css';
-import React from "react";
-import { auth, provider } from "../firebase-config"
-import { signInWithPopup } from 'firebase/auth'
+import { signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { auth, provider } from '../firebase-config';
 
 function Login({ setIsAuth }) {
-  let navigate = useNavigate();
-  const signInWithGoogle = () => {
-    signInWithPopup(auth, provider).then((result) => {
-      localStorage.setItem("isAuth", true);
-      setIsAuth(true);
-      navigate("/");
-    });
+  const navigate = useNavigate();
+
+  const signInWithGoogle = async () => {
+    await signInWithPopup(auth, provider);
+    localStorage.setItem('isAuth', 'true');
+    setIsAuth(true);
+    navigate('/upload');
   };
+
   return (
-    <div className='loginPage'>
-      <p>Sign In With Google to Continue</p>
-      <button className='login-with-google--btn' onClick={signInWithGoogle}>
-        Sign in with Google
-      </button>
-    </div>
+    <main className='loginPage'>
+      <div className='loginCard'>
+        <h1>Creator Login</h1>
+        <p>Viewers can browse freely. Sign in only when you want to upload.</p>
+        <button className='googleBtn' onClick={signInWithGoogle}>
+          Sign in with Google
+        </button>
+      </div>
+    </main>
   );
 }
 

@@ -1,192 +1,393 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+:root {
+  --paper: #f4ecd8;
+  --paper-deep: #eadbb9;
+  --ink: #2d241d;
+  --ink-soft: #5a4b3f;
+  --olive: #69735f;
+  --rust: #9b5f4a;
+  --line: rgba(45, 36, 29, 0.18);
 }
-body {
-  padding: 0%;
-  margin: 0%;
-  font-family: Arial, Helvetica, sans-serif;
+
+.appShell {
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 80% 10%, rgba(155, 95, 74, 0.14) 0%, transparent 30%),
+    radial-gradient(circle at 10% 20%, rgba(105, 115, 95, 0.16) 0%, transparent 28%),
+    linear-gradient(180deg, var(--paper) 0%, #efe4c7 100%);
+  position: relative;
+}
+
+.appShell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(45, 36, 29, 0.04) 0.7px, transparent 0.7px);
+  background-size: 3px 3px;
+  opacity: 0.32;
+  pointer-events: none;
 }
 
 nav {
-  margin: 0;
-  width: 100%;
-  height: 60px;
-  background-color: black;
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  color: white;
+  padding: 14px 30px;
+  background: color-mix(in oklab, var(--paper) 82%, white 18%);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 4px 14px rgba(45, 36, 29, 0.08);
 }
 
-Link {
-  color: black;
+.brand a {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
 }
 
-a {
-  color: white;
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+nav a,
+nav button {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink);
   text-decoration: none;
-  margin: 10px;
-  font-size: 25px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 9px 13px;
+  border-radius: 999px;
+  transition: 0.2s ease;
 }
 
-.createPostPage {
+nav a:hover,
+nav button:hover {
+  border-color: var(--line);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.hero {
+  margin: 46px auto 8px;
+  width: min(1100px, 92vw);
+}
+
+.hero h1 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 3.35rem);
+  line-height: 1.04;
+  font-weight: 700;
+}
+
+.hero p {
+  margin-top: 10px;
+  max-width: 680px;
+  font-family: 'Manrope', sans-serif;
+  color: var(--ink-soft);
+}
+
+.galleryGrid {
+  width: min(1100px, 92vw);
+  margin: 22px auto 56px;
+  column-count: 4;
+  column-gap: 18px;
+}
+
+.photoCard {
+  position: relative;
+  break-inside: avoid;
+  margin: 0 0 18px;
+  display: inline-block;
   width: 100%;
-  height: calc(100vh - 80px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f7f0df;
+  box-shadow: 0 10px 18px rgba(45, 36, 29, 0.1);
+  transform: rotate(0deg);
+}
+
+.photoCard:nth-child(odd) {
+  transform: rotate(-0.25deg);
+}
+
+.photoCard:nth-child(even) {
+  transform: rotate(0.35deg);
+}
+
+.photoCard img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  filter: sepia(0.14) contrast(1.03) saturate(0.93);
+}
+
+.photoMeta {
+  padding: 10px 12px 12px;
+  border-top: 1px dashed var(--line);
+  background: rgba(247, 240, 223, 0.9);
+}
+
+.photoMeta h2 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+}
+
+.photoMeta p {
+  margin: 4px 0 0;
+  color: var(--ink-soft);
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.88rem;
+}
+
+.photoCardActions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  display: flex;
+  gap: 6px;
+}
+
+.editPhotoBtn,
+.deletePhotoBtn {
+  border: 1px solid rgba(45, 36, 29, 0.32);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: rgba(248, 241, 225, 0.9);
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+}
+
+.editPhotoBtn {
+  color: #2d241d;
+}
+
+.deletePhotoBtn {
+  color: #8d2b2b;
+}
+
+.deletePhotoBtn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.statusText {
+  width: min(1100px, 92vw);
+  margin: 16px auto;
+  color: var(--ink-soft);
+  font-family: 'Manrope', sans-serif;
+}
+
+.statusText.error {
+  color: #8d2b2b;
+}
+
+.uploadPage,
+.loginPage {
+  min-height: calc(100vh - 73px);
   display: grid;
   place-items: center;
+  padding: 24px;
 }
 
-.cpContainer {
-  width: 500px;
-  height: auto;
-  padding: 20px;
-  background-color: black;
-  border-radius: 12px;
-  color: white;
-  display: flex;
-  flex-direction: column;
+.uploadCard,
+.loginCard {
+  width: min(620px, 94vw);
+  background: #f8f1e1;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 14px 24px rgba(45, 36, 29, 0.12);
+  padding: 26px;
 }
 
-.cpContainer h1 {
-  text-align: center;
+.uploadCard h1,
+.loginCard h1 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
 }
 
-.cpContainer label {
-  font-size: 25px;
-}
-.cpContainer .inputGp {
-  margin-top: 30px;
-  display: flex;
-  flex-direction: column;
+.uploadCard p,
+.loginCard p {
+  margin-top: 6px;
+  font-family: 'Manrope', sans-serif;
+  color: var(--ink-soft);
 }
 
-.inputGp input,
-.inputGp textarea {
-  font-size: 18px;
-  border: none;
-  border-radius: 2px;
-  padding: 5px;
+.uploadCard label {
+  display: block;
+  margin-top: 14px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ink);
 }
 
-.inputGp input {
-  height: 40px;
-}
-.inputGp textarea {
-  height: 150px;
+.uploadCard input,
+.uploadCard textarea {
+  width: 100%;
+  margin-top: 8px;
+  border: 1px solid rgba(45, 36, 29, 0.28);
+  border-radius: 4px;
+  padding: 10px 12px;
+  font: inherit;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.6);
 }
 
-.cpContainer button {
-  margin-top: 20px;
-  height: 40px;
-  border: none;
-  border-radius: 5px;
+.uploadCard textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.uploadCard button,
+.googleBtn {
+  margin-top: 18px;
+  border: 1px solid rgba(45, 36, 29, 0.34);
+  border-radius: 4px;
+  padding: 11px 16px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: linear-gradient(180deg, #7b8c6e, #68795b);
+  color: #fbf8ef;
   cursor: pointer;
-  font-size: 18px;
-}
-input,
-textarea {
-  margin-top: 5px;
 }
 
-.loginPage {
-  width: 100vw;
-  height: calc(100vh - 80px);
+.uploadCard button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.uploadActions {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  gap: 10px;
   align-items: center;
+  justify-content: flex-end;
+  margin-top: 18px;
 }
 
-.loginPage p {
-  font-size: 30px;
+.uploadActions .cancelUploadBtn {
+  margin-top: 0;
+  background: transparent;
+  color: var(--ink);
 }
 
-/* GOOGLE BUTTOn */
-.login-with-google-btn {
-  cursor: pointer;
-  transition: background-color 0.3s, box-shadow 0.3s;
-  padding: 5px 16px 12px 42px;
-  border: none;
-  border-radius: 3px;
-  box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.25);
-  color: #757575;
-  font-size: 25px;
-  font-weight: 500;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=);
-  background-color: white;
-  background-repeat: no-repeat;
-  background-position: 12px 11px;
-}
-.login-with-google-btn:hover {
-  box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25);
-}
-.login-with-google-btn:active {
-  background-color: #eeeeee;
-}
-.login-with-google-btn:focus {
-  outline: none;
-  box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25),
-    0 0 0 3px #c8dafc;
-}
-.login-with-google-btn:disabled {
-  filter: grayscale(100%);
-  background-color: #ebebeb;
-  box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.25);
-  cursor: not-allowed;
+.uploadActions button {
+  margin-top: 0;
 }
 
-.homePage {
-  width: 100%;
-  min-height: calc(100vh - 80px);
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 20px;
+.uploadPreviewWrap {
+  margin-top: 14px;
 }
 
-.homePage .post {
-  width: 600px;
-  height: auto;
-  max-height: 600px;
-  background-color: rgb(250, 250, 250);
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-  margin: 20px;
-  padding: 20px;
-  border-radius: 15px;
+.uploadPreviewWrap p {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
 }
 
-.post .postHeader {
-  display: flex;
-  justify-content: center;
-  width: 100%;
+.uploadPreviewGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
 }
 
-.postHeader .title {
-  flex: 50%;
-}
-.postHeader .deletePost {
-  flex: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.deletePost button {
-  border: none;
-
-  background: none;
-  font-size: 30px;
-  cursor: pointer;
-}
-
-.post .postTextContainer {
-  word-wrap: break-word;
-  height: auto;
-  max-height: 400px;
-  width: 100%;
+.uploadPreviewCard {
+  position: relative;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
   overflow: hidden;
-  overflow-y: auto;
+  background: #f7f0df;
+}
+
+.uploadPreviewCard img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  display: block;
+}
+
+.removePreviewBtn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(45, 36, 29, 0.3);
+  border-radius: 999px;
+  background: rgba(248, 241, 225, 0.92);
+  color: #8d2b2b;
+  font-size: 1rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.removePreviewBtn:disabled {
+  opacity: 0.6;
+}
+
+.uploadPreviewMeta {
+  padding: 8px;
+  display: grid;
+  gap: 6px;
+  border-top: 1px dashed var(--line);
+}
+
+.uploadPreviewMeta input,
+.uploadPreviewMeta textarea {
+  width: 100%;
+  border: 1px solid rgba(45, 36, 29, 0.28);
+  border-radius: 4px;
+  padding: 7px 8px;
+  font: inherit;
+  font-size: 0.8rem;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.uploadPreviewMeta textarea {
+  min-height: 56px;
+  resize: vertical;
+}
+
+@media (max-width: 1080px) {
+  .galleryGrid {
+    column-count: 3;
+  }
+}
+
+@media (max-width: 780px) {
+  .galleryGrid {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 520px) {
+  .galleryGrid {
+    column-count: 1;
+  }
 }
