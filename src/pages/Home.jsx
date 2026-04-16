@@ -1,6 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, deleteDoc, doc, getDocs, orderBy, query, updateDoc } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+  setDoc,
+  Timestamp,
+  updateDoc,
+} from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import { auth, db, storage } from '../firebase-config';
 import { profileSeedPhotos } from '../profileSeed';
@@ -16,7 +27,6 @@ const ADMIN_EMAILS = adminEmailsFromEnv.length
 
 function Home() {
   const [photos, setPhotos] = useState([]);
-  const [localPhotos, setLocalPhotos] = useState(profileSeedPhotos);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
@@ -36,12 +46,33 @@ function Home() {
   }, [currentUser]);
 
   useEffect(() => {
+    const ensureSeedPhotosInBackend = async () => {
+      await Promise.all(
+        profileSeedPhotos.map(async (seed) => {
+          const seedRef = doc(db, 'gallery', seed.id);
+          const existing = await getDoc(seedRef);
+
+          if (!existing.exists()) {
+            await setDoc(seedRef, {
+              title: seed.title || '',
+              caption: seed.caption || '',
+              imageUrl: seed.imageUrl,
+              isSeed: true,
+              createdAt: Timestamp.fromDate(new Date('2026-01-01T00:00:00Z')),
+            });
+          }
+        })
+      );
+    };
+
     const getPhotos = async () => {
       try {
+        await ensureSeedPhotosInBackend();
+
         const photosCollectionRef = collection(db, 'gallery');
         const q = query(photosCollectionRef, orderBy('createdAt', 'desc'));
         const data = await getDocs(q);
-        setPhotos(data.docs.map((item) => ({ id: item.id, ...item.data(), isLocal: false })));
+        setPhotos(data.docs.map((item) => ({ id: item.id, ...item.data() })));
       } catch (err) {
         setError('Could not load photos right now.');
       } finally {
@@ -52,19 +83,12 @@ function Home() {
     getPhotos();
   }, []);
 
-  const allPhotos = useMemo(() => [...localPhotos, ...photos], [localPhotos, photos]);
-
   const deletePhoto = async (photo) => {
     const shouldDelete = window.confirm('Delete this photo? This cannot be undone.');
     if (!shouldDelete) return;
 
     try {
       setDeletingId(photo.id);
-
-      if (photo.isLocal) {
-        setLocalPhotos((prev) => prev.filter((item) => item.id !== photo.id));
-        return;
-      }
 
       if (photo.storagePath) {
         try {
@@ -91,15 +115,6 @@ function Home() {
     if (nextCaption === null) return;
 
     try {
-      if (photo.isLocal) {
-        setLocalPhotos((prev) =>
-          prev.map((item) =>
-            item.id === photo.id ? { ...item, title: nextTitle.trim(), caption: nextCaption.trim() } : item
-          )
-        );
-        return;
-      }
-
       await updateDoc(doc(db, 'gallery', photo.id), {
         title: nextTitle.trim(),
         caption: nextCaption.trim(),
@@ -124,17 +139,17 @@ function Home() {
       {isLoading && <p className='statusText'>Loading gallery...</p>}
       {error && <p className='statusText error'>{error}</p>}
 
-      {!isLoading && !error && allPhotos.length === 0 && (
+      {!isLoading && !error && photos.length === 0 && (
         <p className='statusText'>No photos yet. Upload your first one.</p>
       )}
 
       <section className='galleryGrid'>
-        {allPhotos.map((photo) => {
+        {photos.map((photo) => {
           const hasMeta = Boolean(photo.title || photo.caption);
 
           return (
             <article className='photoCard' key={photo.id}>
-              {isAdmin && (
+              {currentUser && isAdmin && (
                 <div className='photoCardActions'>
                   <button className='editPhotoBtn' onClick={() => editPhoto(photo)}>
                     Edit

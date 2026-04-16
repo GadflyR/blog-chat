@@ -1,14 +1,43 @@
 import { useEffect, useState } from 'react';
+import heic2any from 'heic2any';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 import { auth, db, storage } from '../firebase-config';
+
+const isHeicLike = (file) => {
+  const type = (file.type || '').toLowerCase();
+  return (
+    type.includes('heic') ||
+    type.includes('heif') ||
+    /\.(heic|heif)$/i.test(file.name)
+  );
+};
+
+const normalizeUploadFile = async (file) => {
+  if (!isHeicLike(file)) return file;
+
+  const converted = await heic2any({
+    blob: file,
+    toType: 'image/jpeg',
+    quality: 0.92,
+  });
+
+  const jpegBlob = Array.isArray(converted) ? converted[0] : converted;
+  const jpegName = file.name.replace(/\.(heic|heif)$/i, '.jpg');
+
+  return new File([jpegBlob], jpegName, {
+    type: 'image/jpeg',
+    lastModified: Date.now(),
+  });
+};
 
 function CreatePost({ isAuth }) {
   const [imageItems, setImageItems] = useState([]);
   const [singleTitle, setSingleTitle] = useState('');
   const [singleCaption, setSingleCaption] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [isPreparing, setIsPreparing] = useState(false);
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
@@ -25,21 +54,34 @@ function CreatePost({ isAuth }) {
     };
   }, [imageItems]);
 
-  const onFilesChange = (event) => {
+  const onFilesChange = async (event) => {
     const files = Array.from(event.target.files || []);
 
     imageItems.forEach((item) => URL.revokeObjectURL(item.previewUrl));
 
-    const nextItems = files.map((file) => ({
-      file,
-      previewUrl: URL.createObjectURL(file),
-      title: '',
-      caption: '',
-    }));
+    setError('');
+    setIsPreparing(true);
 
-    setImageItems(nextItems);
-    setSingleTitle('');
-    setSingleCaption('');
+    try {
+      const normalizedFiles = await Promise.all(files.map((file) => normalizeUploadFile(file)));
+
+      const nextItems = normalizedFiles.map((file) => ({
+        file,
+        previewUrl: URL.createObjectURL(file),
+        title: '',
+        caption: '',
+      }));
+
+      setImageItems(nextItems);
+      setSingleTitle('');
+      setSingleCaption('');
+    } catch (err) {
+      console.error('File preparation failed:', err);
+      setError('Could not process selected files. Try different images.');
+      setImageItems([]);
+    } finally {
+      setIsPreparing(false);
+    }
   };
 
   const removeImageAt = (indexToRemove) => {
@@ -105,7 +147,7 @@ function CreatePost({ isAuth }) {
       <div className='uploadCard'>
         <h1>Upload Photos</h1>
         <p>
-          Upload one or many images at once.
+          Upload one or many images at once (HEIC/HEIF included).
           {imageItems.length > 1
             ? ' Add title/caption per image below.'
             : ' Title/caption are optional.'}
@@ -113,7 +155,12 @@ function CreatePost({ isAuth }) {
 
         <label>
           Image files
-          <input type='file' accept='image/*' multiple onChange={onFilesChange} />
+          <input
+            type='file'
+            accept='image/*,.heic,.HEIC,.heif,.HEIF'
+            multiple
+            onChange={onFilesChange}
+          />
         </label>
 
         {imageItems.length === 1 && (
@@ -149,7 +196,7 @@ function CreatePost({ isAuth }) {
                     type='button'
                     className='removePreviewBtn'
                     onClick={() => removeImageAt(index)}
-                    disabled={isUploading}
+                    disabled={isUploading || isPreparing}
                     aria-label={`Remove ${item.file.name}`}
                     title='Remove image'
                   >
@@ -181,14 +228,16 @@ function CreatePost({ isAuth }) {
         {error && <p className='statusText error'>{error}</p>}
 
         <div className='uploadActions'>
-          <button type='button' className='cancelUploadBtn' onClick={() => navigate('/')} disabled={isUploading}>
+          <button type='button' className='cancelUploadBtn' onClick={() => navigate('/')} disabled={isUploading || isPreparing}>
             Cancel & Go Home
           </button>
 
-          <button onClick={uploadPhoto} disabled={isUploading || !imageItems.length}>
-            {isUploading
-              ? `Uploading ${imageItems.length} photo${imageItems.length > 1 ? 's' : ''}...`
-              : `Publish ${imageItems.length || ''} ${imageItems.length === 1 ? 'Photo' : 'Photos'}`.trim()}
+          <button onClick={uploadPhoto} disabled={isUploading || isPreparing || !imageItems.length}>
+            {isPreparing
+              ? 'Preparing files...'
+              : isUploading
+                ? `Uploading ${imageItems.length} photo${imageItems.length > 1 ? 's' : ''}...`
+                : `Publish ${imageItems.length || ''} ${imageItems.length === 1 ? 'Photo' : 'Photos'}`.trim()}
           </button>
         </div>
       </div>
